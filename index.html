@@ -495,22 +495,28 @@
                 return;
             }
             
-            // Show download initiated message
-            if (confirm(`Start download for ${quality}?`)) {
-                // Create temporary link and trigger download
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `video_${quality}.${ext}`;
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-                
-                // Add to DOM, click, and remove
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                // Show success message
-                showTemporaryMessage(`Download started for ${quality} quality!`, 'success');
+            // Handle different types of URLs
+            if (ext === 'redirect' || url.includes('y2mate') || url.includes('savefrom') || url.includes('keepvid')) {
+                // External service - open in new tab
+                if (confirm(`Open ${quality} download page in new tab?`)) {
+                    window.open(url, '_blank', 'noopener,noreferrer');
+                    showTemporaryMessage(`Opening download page for ${quality}`, 'info');
+                }
+            } else {
+                // Direct download
+                if (confirm(`Start download for ${quality}?`)) {
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `video_${quality}.${ext}`;
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
+                    
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    showTemporaryMessage(`Download started for ${quality} quality!`, 'success');
+                }
             }
         }
 
